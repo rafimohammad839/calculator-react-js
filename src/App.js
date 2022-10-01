@@ -6,9 +6,10 @@ function App() {
   const [output, setOutput] = useState('0');
   const [miniOutput, setMiniOutput] = useState('0');
 
+  const operators = ['/', '-', '+', '*', '.'];
+
   const handleClick = (e) => {
     let current = e.target.innerText;
-    let isOperator = e.target.getAttribute('data-operator');
 
     if (current === '=') {
       setOutput(miniOutput);
@@ -23,8 +24,10 @@ function App() {
       })
     } else {
       setOutput((prev) => {
-        if (prev === '0' && !isOperator) {
+        if (prev === '0' && !operators.includes(current)) {
           return current;
+        } else if (operators.includes(prev.at(-1)) && operators.includes(current)) {
+          return prev;
         }
         return prev + current;
       });
@@ -52,11 +55,11 @@ function App() {
           <span>({miniOutput})</span> {output}
         </div>
         <div className="operators">
-          <button onClick={handleClick} data-operator>/</button>
-          <button onClick={handleClick} data-operator>*</button>
-          <button onClick={handleClick} data-operator>-</button>
-          <button onClick={handleClick} data-operator>+</button>
-          <button onClick={handleClick} data-operator>DEL</button>
+          <button onClick={handleClick}>/</button>
+          <button onClick={handleClick}>*</button>
+          <button onClick={handleClick}>-</button>
+          <button onClick={handleClick}>+</button>
+          <button onClick={handleClick}>DEL</button>
         </div>
 
         <div className="keys">

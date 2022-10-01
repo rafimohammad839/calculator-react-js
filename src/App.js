@@ -1,23 +1,71 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { useEffect, useState } from 'react';
+import "./App.css";
 
 function App() {
+  const [output, setOutput] = useState('0');
+  const [miniOutput, setMiniOutput] = useState('0');
+
+  const handleClick = (e) => {
+    let current = e.target.innerText;
+    let isOperator = e.target.getAttribute('data-operator');
+
+    if (current === '=') {
+      setOutput(miniOutput);
+    } else if (current === 'DEL') {
+      setOutput((prev) => {
+        if (prev.length === 1) {
+          return '0';
+        } else if (prev === 'Infinity') {
+          return '0';
+        }
+        return prev.slice(0, -1);
+      })
+    } else {
+      setOutput((prev) => {
+        if (prev === '0' && !isOperator) {
+          return current;
+        }
+        return prev + current;
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (!isNaN(output[output.length - 1])) {
+      setMiniOutput(eval(output).toString())
+    }
+  }, [output])
+  
+  const createDigits = () => {
+    let digits = [];
+    for (let i = 1; i < 10; i++) {
+      digits.push(<button onClick={handleClick} key={i}>{i}</button>);
+    }
+    return digits;
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="calculator">
+        <div className="output">
+          <span>({miniOutput})</span> {output}
+        </div>
+        <div className="operators">
+          <button onClick={handleClick} data-operator>/</button>
+          <button onClick={handleClick} data-operator>*</button>
+          <button onClick={handleClick} data-operator>-</button>
+          <button onClick={handleClick} data-operator>+</button>
+          <button onClick={handleClick} data-operator>DEL</button>
+        </div>
+
+        <div className="keys">
+          { createDigits() }
+          <button onClick={handleClick}>0</button>
+          <button onClick={handleClick}>.</button>
+          <button onClick={handleClick}>=</button>
+        </div>
+      </div>
     </div>
   );
 }
